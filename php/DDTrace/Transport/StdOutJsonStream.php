@@ -22,12 +22,11 @@ namespace DDTrace\Transport {
                 return;
             }
 
-            fwrite($this->stream, '{"headers": ');
-            fwrite($this->stream, json_encode($this->headers));
-            fwrite($this->stream, ', "traces": ');
-            fwrite($this->stream, $this->encodeTraces($tracer));
-            fwrite($this->stream, '}');
-            fwrite($this->stream, PHP_EOL);
+            foreach ($this->normaliseTraces($tracer) as $trace) {
+                foreach ($trace as $span) {
+                    fwrite($this->stream, json_encode(['headers' => $this->headers, 'traces' => [[$span]]]) . PHP_EOL);
+                }
+            }
         }
 
         public function setHeader($key, $value)
@@ -35,7 +34,7 @@ namespace DDTrace\Transport {
             $this->headers[(string) $key] = (string) $value;
         }
 
-        private function encodeTraces(Tracer $tracer)
+        private function normaliseTraces(Tracer $tracer)
         {
             $traces = $tracer->getTracesAsArray();
 
@@ -51,15 +50,7 @@ namespace DDTrace\Transport {
                 }
             }
 
-            $json = json_encode($traces);
-
-            if (false === $json) {
-                self::logDebug('Failed to json-encode trace: ' . json_last_error_msg());
-
-                return '[[]]';
-            }
-
-            return $json;
+            return $traces;
         }
     }
 }
