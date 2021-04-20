@@ -38,7 +38,7 @@ namespace DDTrace\Transport {
 
             foreach ($traces as $trace) {
                 foreach (array_chunk($trace, self::SPAN_CHUNK_SIZE) as $spans) {
-                    fwrite($this->stream, json_encode(['headers' => $this->headers, 'traces' => [$spans]]) . PHP_EOL);
+                    fwrite($this->stream, json_encode(['traces' => [$spans]]) . PHP_EOL);
                 }
             }
         }
@@ -54,9 +54,9 @@ namespace DDTrace\Transport {
 
             foreach ($traces as &$trace) {
                 foreach ($trace as &$span) {
-                    $span['trace_id'] = (string) $span['trace_id'];
-                    $span['span_id'] = (string) $span['span_id'];
-                    $span['parent_id'] = (string) $span['parent_id'];
+                    $span['trace_id'] = dechex($span['trace_id']);
+                    $span['span_id'] = dechex($span['span_id']);
+                    $span['parent_id'] = dechex($span['parent_id']);
 
                     if (!isset($span['meta'])) {
                         $span['meta'] = (object) [];
