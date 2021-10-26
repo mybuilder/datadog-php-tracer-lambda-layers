@@ -1,0 +1,28 @@
+name: Publish Docker image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php_version:
+          - 74
+        include:
+          - php_version: 74
+            php_version_date: 20190902
+            dd_trace_version: 0.56.0
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u irrelevant-user --password-stdin
+          docker build \
+            --build-arg PHP_VERSION=${{ matrix.php_version }} \
+            --build-arg PHP_VERSION_DATE=${{ matrix.php_version_date }} \
+            --build-arg DD_TRACE_VERSION=${{ matrix.dd_trace_version }} \
+            -t ghcr.io/mybuilder/datadog-apm-lambda-layers:php-${{ matrix.php_version }}-dd-${{ matrix.dd_trace_version }} .
+          docker push ghcr.io/mybuilder/datadog-apm-lambda-layers:php-${{ matrix.php_version }}-dd-${{ matrix.dd_trace_version }}
