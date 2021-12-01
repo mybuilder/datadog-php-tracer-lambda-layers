@@ -41,8 +41,8 @@ namespace DDTrace\Transport {
             }
 
             foreach ($traces as $trace) {
-                foreach ($trace as $spans) {
-                    fwrite($this->stream, json_encode(['traces' => [$spans]]) . PHP_EOL);
+                foreach ($trace as $span) {
+                    fwrite($this->stream, json_encode(['traces' => [[$span]]]) . PHP_EOL);
                 }
             }
         }
