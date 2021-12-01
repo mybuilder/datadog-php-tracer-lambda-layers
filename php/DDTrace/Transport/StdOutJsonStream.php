@@ -21,6 +21,12 @@ namespace DDTrace\Transport {
             $traces = $this->normaliseTraces($tracer);
             $isDebug = false !== (bool) \getenv('LOG_BUNDLE_SERVERLESS_DEBUG');
 
+            if (\function_exists('dd_trace_stdout_json_stream_send')) {
+                dd_trace_stdout_json_stream_send($traces, $isDebug);
+
+                return;
+            }
+
             if ($isDebug) {
                 fwrite($this->stream, '[DEBUG] prioritySampling = ' . $tracer->getPrioritySampling() . PHP_EOL);
                 fwrite($this->stream, '[DEBUG] ' . json_encode($traces) . PHP_EOL);
