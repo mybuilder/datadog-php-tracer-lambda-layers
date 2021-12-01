@@ -8,8 +8,6 @@ namespace DDTrace\Transport {
     {
         use LoggingTrait;
 
-        private const SPAN_CHUNK_SIZE = 3;
-
         private $headers = [];
         private $stream;
 
@@ -37,7 +35,7 @@ namespace DDTrace\Transport {
             }
 
             foreach ($traces as $trace) {
-                foreach (array_chunk($trace, self::SPAN_CHUNK_SIZE) as $spans) {
+                foreach ($trace as $spans) {
                     fwrite($this->stream, json_encode(['traces' => [$spans]]) . PHP_EOL);
                 }
             }
