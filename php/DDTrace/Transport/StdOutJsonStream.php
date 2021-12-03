@@ -8,13 +8,9 @@ namespace DDTrace\Transport {
     {
         use LoggingTrait;
 
-        private $headers = [];
-        private $stream;
+        private const MAX_OUTPUT_LENGTH = 100_000;
 
-        public function __construct()
-        {
-            $this->stream = fopen('php://stdout', 'w');
-        }
+        private array $headers = [];
 
         public function send(Tracer $tracer)
         {
@@ -27,24 +23,41 @@ namespace DDTrace\Transport {
                 return;
             }
 
+            $stream = \fopen('php://stderr', 'w');
+
             if ($isDebug) {
-                fwrite($this->stream, '[DEBUG] prioritySampling = ' . $tracer->getPrioritySampling() . PHP_EOL);
-                fwrite($this->stream, '[DEBUG] ' . json_encode($traces) . PHP_EOL);
+                \fwrite($stream, '[DEBUG] prioritySampling = ' . $tracer->getPrioritySampling() . \PHP_EOL);
+                \fwrite($stream, '[DEBUG] ' . \json_encode($traces) . \PHP_EOL);
             }
 
             if (\in_array($tracer->getPrioritySampling(), [PrioritySampling::AUTO_REJECT, PrioritySampling::USER_REJECT])) {
                 if ($isDebug) {
-                    fwrite($this->stream, '[DEBUG] Dropping trace as requested'. PHP_EOL);
+                    \fwrite($stream, '[DEBUG] Dropping trace as requested' . \PHP_EOL);
                 }
 
                 return;
             }
 
+            $outputLength = 0;
+
             foreach ($traces as $trace) {
                 foreach ($trace as $span) {
-                    fwrite($this->stream, json_encode(['traces' => [[$span]]]) . PHP_EOL);
+                    $encodedSpan = \json_encode(['traces' => [[$span]]]) . \PHP_EOL;
+                    $outputLength += \strlen($encodedSpan);
+
+                    if ($outputLength > self::MAX_OUTPUT_LENGTH) {
+                        if ($isDebug) {
+                            \fwrite($stream, \sprintf('[DEBUG] Reached max output length of %d', self::MAX_OUTPUT_LENGTH) . \PHP_EOL);
+                        }
+
+                        break 2;
+                    }
+
+                    \fwrite($stream, $encodedSpan);
                 }
             }
+
+            \fclose($stream);
         }
 
         public function setHeader($key, $value)
