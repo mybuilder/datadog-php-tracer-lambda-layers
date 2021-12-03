@@ -27,7 +27,6 @@ namespace DDTrace\Transport {
 
             if ($isDebug) {
                 \fwrite($stream, '[DEBUG] prioritySampling = ' . $tracer->getPrioritySampling() . \PHP_EOL);
-                \fwrite($stream, '[DEBUG] ' . \json_encode($traces) . \PHP_EOL);
             }
 
             if (\in_array($tracer->getPrioritySampling(), [PrioritySampling::AUTO_REJECT, PrioritySampling::USER_REJECT])) {
@@ -47,7 +46,7 @@ namespace DDTrace\Transport {
 
                     if ($outputLength > self::getMaxOutputLength()) {
                         if ($isDebug) {
-                            \fwrite($stream, \sprintf('[DEBUG] Reached max output length of %d', self::MAX_OUTPUT_LENGTH) . \PHP_EOL);
+                            \fwrite($stream, \sprintf('[DEBUG] Reached max output length of %d', self::getMaxOutputLength()) . \PHP_EOL);
                         }
 
                         break 2;
@@ -57,16 +56,12 @@ namespace DDTrace\Transport {
                 }
             }
 
-            if ($isDebug) {
-                \fwrite($stream, \sprintf('[DEBUG] Reached output length of %d', $outputLength) . \PHP_EOL);
-            }
-
             \fclose($stream);
         }
 
         private static function getMaxOutputLength(): int
         {
-            return $_ENV['LOG_BUNDLE_SERVERLESS_MAX_OUTPUT_LENGTH'] ?? self::MAX_OUTPUT_LENGTH;
+            return (int) ($_ENV['LOG_BUNDLE_SERVERLESS_MAX_OUTPUT_LENGTH'] ?? self::MAX_OUTPUT_LENGTH);
         }
 
         public function setHeader($key, $value)
