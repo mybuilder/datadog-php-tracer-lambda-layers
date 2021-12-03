@@ -45,7 +45,7 @@ namespace DDTrace\Transport {
                     $encodedSpan = \json_encode(['traces' => [[$span]]]) . \PHP_EOL;
                     $outputLength += \strlen($encodedSpan);
 
-                    if ($outputLength > self::MAX_OUTPUT_LENGTH) {
+                    if ($outputLength > self::getMaxOutputLength()) {
                         if ($isDebug) {
                             \fwrite($stream, \sprintf('[DEBUG] Reached max output length of %d', self::MAX_OUTPUT_LENGTH) . \PHP_EOL);
                         }
@@ -57,7 +57,16 @@ namespace DDTrace\Transport {
                 }
             }
 
+            if ($isDebug) {
+                \fwrite($stream, \sprintf('[DEBUG] Reached output length of %d', $outputLength) . \PHP_EOL);
+            }
+
             \fclose($stream);
+        }
+
+        private static function getMaxOutputLength(): int
+        {
+            return $_ENV['LOG_BUNDLE_SERVERLESS_MAX_OUTPUT_LENGTH'] ?? self::MAX_OUTPUT_LENGTH;
         }
 
         public function setHeader($key, $value)
