@@ -15,7 +15,7 @@ jobs:
         include:
           - php_version: 74
             php_version_date: 20190902
-            dd_trace_version: 0.56.0
+            dd_trace_version: 0.65.1
     steps:
       - uses: actions/checkout@v2
       - run: |

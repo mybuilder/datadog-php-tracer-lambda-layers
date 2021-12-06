@@ -8,7 +8,7 @@ command -v aws >/dev/null || {
 }
 
 declare -A PHP_VERSIONS=( [74]=20190902 )
-DD_TRACE_VERSION=0.56.0
+DD_TRACE_VERSION=0.65.1
 LAYERS_DIR=$(pwd)/layers
 
 mkdir -p "${LAYERS_DIR}"
@@ -28,7 +28,7 @@ for PHP_VERSION in "${!PHP_VERSIONS[@]}"; do
 
   BUILD_DIR=$(pwd)/build/"${IMAGE}"
   rm -rf "${BUILD_DIR}" && mkdir -p "${BUILD_DIR}"
-  docker run --entrypoint tar "${IMAGE}" -ch -C /opt . | tar -x -C "${BUILD_DIR}"
+  docker run --rm --entrypoint tar "${IMAGE}" -ch -C /opt . | tar -x -C "${BUILD_DIR}"
   cd "${BUILD_DIR}" && zip -rX "${ZIP_PATH}" ./* && cd - >/dev/null
 
   echo ""
