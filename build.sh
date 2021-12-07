@@ -8,7 +8,7 @@ command -v aws >/dev/null || {
 }
 
 declare -A PHP_VERSIONS=( [74]=20190902 )
-DD_TRACE_VERSION=0.65.1
+DD_TRACE_VERSION=0.56.0
 LAYERS_DIR=$(pwd)/layers
 
 mkdir -p "${LAYERS_DIR}"

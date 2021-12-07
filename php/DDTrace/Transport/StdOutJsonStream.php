@@ -8,7 +8,7 @@ namespace DDTrace\Transport {
     {
         use LoggingTrait;
 
-        private const MAX_OUTPUT_LENGTH = 100_000;
+        private const MAX_OUTPUT_LENGTH = 50_000;
 
         private array $headers = [];
 
