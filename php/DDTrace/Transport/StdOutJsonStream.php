@@ -75,9 +75,9 @@ namespace DDTrace\Transport {
 
             foreach ($traces as &$trace) {
                 foreach ($trace as &$span) {
-                    $span['trace_id'] = dechex($span['trace_id']);
-                    $span['span_id'] = dechex($span['span_id']);
-                    $span['parent_id'] = dechex($span['parent_id']);
+                    $span['trace_id'] = dechex((int) $span['trace_id']);
+                    $span['span_id'] = dechex((int) $span['span_id']);
+                    $span['parent_id'] = dechex((int) $span['parent_id']);
 
                     if (!isset($span['meta'])) {
                         $span['meta'] = (object) [];
