@@ -38,7 +38,6 @@ for PHP_VERSION in "${!PHP_VERSIONS[@]}"; do
   LAYER_VERSION=$(
     aws lambda publish-layer-version \
       --region eu-west-1 \
-      --profile marketplace \
       --layer-name "datadog-php-tracer-${PHP_VERSION}" \
       --zip-file "fileb://${ZIP_PATH}" \
       --compatible-runtimes provided \
@@ -49,7 +48,6 @@ for PHP_VERSION in "${!PHP_VERSIONS[@]}"; do
 
   aws lambda add-layer-version-permission \
     --region eu-west-1 \
-    --profile marketplace \
     --layer-name "datadog-php-tracer-${PHP_VERSION}" \
     --version-number "${LAYER_VERSION}" \
     --action lambda:GetLayerVersion \
