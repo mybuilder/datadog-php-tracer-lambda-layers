@@ -28,11 +28,11 @@ This means that the trace will write to `stderr` and can be picked up by datadog
 - Next we need to locally configure your AWS CLI setup, based on the following:
 
 ```bash
-$ aws configure sso --profile marketplace
-SSO start URL: https://mybuilder-org.awsapps.com/start
+$ aws configure sso
+SSO start URL:
 SSO Region: eu-west-1
-There are several AWS accounts available to you. # Select `MarketplaceProd, aws+marketplace-prod@mybuilder.team (534342507982)`
-There may be several roles available to you. # Select AWSPowerUserAccess`
+There are several AWS accounts available to you.
+There may be several roles available to you.
 CLI default client Region: eu-west-1
 CLI default output format [None]: <leave blank>
 ```
@@ -40,26 +40,8 @@ CLI default output format [None]: <leave blank>
 - With this configured we can verify that it has worked by executing the following:
 
 ```bash
-$ aws s3 ls --profile marketplace
+$ aws s3 ls
 ...
-2022-06-06 15:12:07 admin-prod-serverlessdeploymentbucket-1r032qz6qx0ei
-2022-02-16 11:55:24 admin-robots-txt-20220207054947335000000002
-2021-10-22 15:54:44 admin-webhook-prod-serverlessdeploymentbucket-1pydw7iia5l19
-2021-12-15 10:57:21 content-hub-prod-serverlessdeploymentbucket-zygu0k7ph2vp
-2021-09-22 17:44:59 datadogforwarder-forwarderbucket-1huxxeejk9xtj
-2021-10-22 15:15:40 job-draft-api-prod-serverlessdeploymentbucket-su3k2g4415gy
-2021-10-22 15:15:54 leads-api-prod-serverlessdeploymentbucket-17udnyg6q3f8x
-2021-06-30 18:15:15 marketplace-admin-sf1-pr-serverlessdeploymentbuck-87ndw3npiw6d
-2022-02-17 17:03:17 marketplace-custom-error-response-20220214162258891800000001
-2021-11-22 15:09:13 marketplace-prod-serverlessdeploymentbucket-16gb2stbkad42
-2022-02-17 17:03:17 marketplace-robots-txt-20220214162258917000000002
-2022-02-17 17:03:17 mybldr-marketplace-assets-prod
-2022-02-17 17:03:17 mybldr-marketplace-assets-static-prod
-2022-05-16 16:17:40 mybldr-marketplace-fat-page-cache-prod
-2022-02-14 16:32:04 mybldr-marketplace-logs-prod
-2022-02-14 12:12:02 mybldr-marketplace-logs-waf-prod
-2021-10-22 15:15:38 trade-approvals-api-prod-serverlessdeploymentbuck-1tqeia2o93ya
-2021-11-19 18:00:31 webhook-prod-serverlessdeploymentbucket-yt392ncxombd
 ...
 ```
 
@@ -295,7 +277,7 @@ updating: ddtrace/ddtrace.so (deflated 59%)
 ### Publishing datadog-php-tracer 0.79.0 Lambda layer for PHP 81
 
 {
-    "Statement": "{\"Sid\":\"public\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"lambda:GetLayerVersion\",\"Resource\":\"arn:aws:lambda:eu-west-1:534342507982:layer:datadog-php-tracer-81:2\"}",
-    "RevisionId": "08a40b83-2429-4098-86df-d8e1d0e84e83"
+    "Statement": "{\"Sid\":\"public\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"lambda:GetLayerVersion\",\"Resource\":\"arn:aws:lambda:eu-west-1:123:layer:datadog-php-tracer-81:2\"}",
+    "RevisionId": "25e8e930-e1f7-4400-a24d-28ab205b788c"
 }
 ```
