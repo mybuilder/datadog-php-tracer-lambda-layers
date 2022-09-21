@@ -29,10 +29,9 @@ This means that the trace will write to `stderr` and can be picked up by datadog
 
 ```bash
 $ aws configure sso
-SSO start URL:
+SSO start URL: https://console.aws.amazon.com/console/home
 SSO Region: eu-west-1
-There are several AWS accounts available to you.
-There may be several roles available to you.
+Choose the relevant AWS account/role.
 CLI default client Region: eu-west-1
 CLI default output format [None]: <leave blank>
 ```
@@ -42,6 +41,8 @@ CLI default output format [None]: <leave blank>
 ```bash
 $ aws s3 ls
 ...
+2022-09-21 15:12:07 admin
+2022-09-20 15:12:07 api
 ...
 ```
 
