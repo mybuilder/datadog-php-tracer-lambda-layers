@@ -9,15 +9,16 @@ This will publish a lambda layer that adds the Datadog PHP tracer extension as a
 This allows us to use `DDTrace` functions from inside our application so that we can send traces to datadog.
 
 The way the trace extension wants you to integrate this is by using their datadog agent but this has quite a large
-runtime memory footprint so instead we've chosen to just add the PHP extension and manually call `flush` from within our [log bundle](https://github.com/mybuilder/log-bundle/blob/main/src/EventSubscriber/DatadogTraceSubscriber.php#L89)
-as well as manipulating the generated code as follows:
+runtime memory footprint so instead we've chosen to add a bootstrap file that on shutdown will call tracer flush for us.
 
-In the `Dockerfile` we make a couple of tweaks:
+The amends we've made are to manipulate the generated code as follows:
 
 1. Run a cat command to add the contents of `StdOutJsonStream.php` to the generated_tracer_api: `cat /tmp/php/DDTrace/Transport/StdOutJsonStream.php >> /tmp/ddtrace/opt/datadog-php/dd-trace-sources/bridge/_generated_tracer_api.php`
-2. Run a sed command to amend the contents of the generated_tracer_api to add in our `StdOutJsonStream` transport: `sed -i 's/self::$instance = new Tracer();/self::$instance = new Tracer(new \\DDTrace\\Transport\\StdOutJsonStream());/g' /tmp/ddtrace/opt/datadog-php/dd-trace-sources/bridge/_generated_tracer_api.php`
+2. Run a cat command to add the contents of `Bootstrap.php` to the generated_tracer_api: `cat /tmp/php/DDTrace/Bootstrap.php >> /tmp/ddtrace/opt/datadog-php/dd-trace-sources/bridge/_generated_tracer_api.php`
+3. Run a sed command to amend the contents of the generated_tracer_api to add in our `StdOutJsonStream` transport: `sed -i 's/self::$instance = new Tracer();/self::$instance = new Tracer(new \\DDTrace\\Transport\\StdOutJsonStream());/g' /tmp/ddtrace/opt/datadog-php/dd-trace-sources/bridge/_generated_tracer_api.php`
+4. Run a sed command to add the boostrap to the init: `sed -i '/IntegrationsLoader::load()/i \\\DDTrace\\Bootstrap::tracerOnce();' /tmp/ddtrace/opt/datadog-php/dd-trace-sources/bridge/dd_init.php`
 
-This means that the trace will write to `stderr` and can be picked up by datadog.
+This means that the trace will write to `stderr` if auto flush is disabled and can be picked up by datadog.
 
 ## Deployment
 

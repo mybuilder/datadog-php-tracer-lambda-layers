@@ -2,17 +2,14 @@ namespace DDTrace\Transport {
     use DDTrace\Transport;
     use DDTrace\Contracts\Tracer;
     use DDTrace\Sampling\PrioritySampling;
-    use DDTrace\Log\LoggingTrait;
 
     final class StdOutJsonStream implements Transport
     {
-        use LoggingTrait;
-
         private const MAX_OUTPUT_LENGTH = 50_000;
 
         private array $headers = [];
 
-        public function send(Tracer $tracer)
+        public function send(Tracer $tracer): void
         {
             $traces = $this->normaliseTraces($tracer);
             $isDebug = false !== (bool) \getenv('LOG_BUNDLE_SERVERLESS_DEBUG');
@@ -64,21 +61,17 @@ namespace DDTrace\Transport {
             return (int) ($_ENV['LOG_BUNDLE_SERVERLESS_MAX_OUTPUT_LENGTH'] ?? self::MAX_OUTPUT_LENGTH);
         }
 
-        public function setHeader($key, $value)
+        public function setHeader($key, $value): void
         {
             $this->headers[(string) $key] = (string) $value;
         }
 
-        private function normaliseTraces(Tracer $tracer)
+        private function normaliseTraces(Tracer $tracer): array
         {
             $traces = $tracer->getTracesAsArray();
 
             foreach ($traces as &$trace) {
                 foreach ($trace as &$span) {
-                    $span['trace_id'] = dechex((int) $span['trace_id']);
-                    $span['span_id'] = dechex((int) $span['span_id']);
-                    $span['parent_id'] = dechex((int) $span['parent_id']);
-
                     if (!isset($span['meta'])) {
                         $span['meta'] = (object) [];
                     }

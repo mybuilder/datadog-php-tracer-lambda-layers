@@ -11,7 +11,9 @@ RUN curl -A "Docker" -o /tmp/ddtrace.tar.gz -D - -L -s "https://github.com/DataD
  && mkdir -p /tmp/ddtrace /opt/ddtrace \
  && tar zxpf /tmp/ddtrace.tar.gz -C /tmp/ddtrace \
  && cat /tmp/php/DDTrace/Transport/StdOutJsonStream.php >> /tmp/ddtrace/opt/datadog-php/dd-trace-sources/bridge/_generated_tracer_api.php \
+ && cat /tmp/php/DDTrace/Bootstrap.php >> /tmp/ddtrace/opt/datadog-php/dd-trace-sources/bridge/_generated_tracer_api.php \
  && sed -i 's/self::$instance = new Tracer();/self::$instance = new Tracer(new \\DDTrace\\Transport\\StdOutJsonStream());/g' /tmp/ddtrace/opt/datadog-php/dd-trace-sources/bridge/_generated_tracer_api.php \
+ && sed -i '/IntegrationsLoader::load()/i \\\DDTrace\\Bootstrap::tracerOnce();' /tmp/ddtrace/opt/datadog-php/dd-trace-sources/bridge/dd_init.php \
  && cp "/tmp/ddtrace/opt/datadog-php/extensions/ddtrace-${PHP_VERSION_DATE}.so" /opt/ddtrace/ddtrace.so \
  && cp -R /tmp/ddtrace/opt/datadog-php/dd-trace-sources /opt/ddtrace
 
